@@ -30,7 +30,11 @@ def parse_weather_data_from_html(document):
         data_date = f'{now.year}-0{now.month}-{now.day}'
     else:
         data_date = f'{now.year}-{now.month}-{now.day}'
-    data_time = f'{now.hour+1}:00'
+
+    if len(str(now.hour)) < 2:
+        data_time = f'0{now.hour+1}:00'
+    else:
+        data_time = f'{now.hour+1}:00'
 
     weather_src = document.find(
         'ul', {'data-date': data_date, 'data-time': data_time})
