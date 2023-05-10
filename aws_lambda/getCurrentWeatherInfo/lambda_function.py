@@ -1,10 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import pytz
 
 
 def parse_weather_data_from_html(document):
-    timezone = 9
+    timezone = pytz.timezone('Asia/Seoul')
 
     # 가져와야 하는 항목
     # 1. 최저/최고기온 (documents[0])
@@ -27,12 +28,17 @@ def parse_weather_data_from_html(document):
 
     # 3. 현재 온도
     # 현재 시간 기반으로 날씨 데이터 탐색
-    now = datetime.now()
+    now = datetime.now(timezone)
+
     if len(str(now.month)) < 2:
         data_date = f'{now.year}-0{now.month}-{now.day}'
     else:
         data_date = f'{now.year}-{now.month}-{now.day}'
-    data_time = f'{now.hour+timezone+1}:00'
+
+    if len(str(now.hour)) < 2:
+        data_time = f'0{now.hour+1}:00'
+    else:
+        data_time = f'{now.hour+1}:00'
 
     weather_src = document.find(
         'ul', {'data-date': data_date, 'data-time': data_time})
@@ -44,12 +50,12 @@ def parse_weather_data_from_html(document):
     weather = weather_src.select('span.wic')[0].text
 
     result = {
-        'minTemp': min_temp,
-        'currentTemp': current_temp,
-        'maxTemp': max_temp,
+        'minTemp': f'{min_temp}',
+        'currentTemp': f'{current_temp}',
+        'maxTemp': f'{max_temp}',
         'weather': weather,
-        'microDust': dust_src[0],
-        'ultraMicroDust': dust_src[1],
+        'microDust': f'{dust_src[0]}',
+        'ultraMicroDust': f'{dust_src[1]}',
     }
 
     return result
