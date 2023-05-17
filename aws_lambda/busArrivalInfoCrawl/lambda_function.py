@@ -57,13 +57,19 @@ def get_bus_shuttle_info():
     lastTimeInMinute = 20*min_unit + 40
 
     if current_time >= firstTimeInMinute and current_time <= lastTimeInMinute:
+        if upcoming_time <= 4:
+            arrivalSoon = True
+        else:
+            arrivalSoon = False
+
         ret_data = {
             'firstTime': '08:30',
             'lastTime': '20:40',
             'predictTime1': f'{upcoming_time}',
             'stationNm1': '',
             'predictTime2': f'{next_time}',
-            'stationNm2': ''
+            'stationNm2': '',
+            'arrivalSoon': arrivalSoon
         }
     else:
         ret_data = {
@@ -73,6 +79,7 @@ def get_bus_shuttle_info():
             'stationNm1': '도착 정보 없음',
             'predictTime2': '-1',
             'stationNm2': '도착 정보 없음',
+            'arrivalSoon': False
         }
 
     return ret_data
